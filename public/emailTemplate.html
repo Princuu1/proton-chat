@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the Chat App!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 0;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff4081 0%, #ff9100 100%);
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 30px;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #555555;
+        }
+
+        .content p {
+            margin: 20px 0;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .visit-button {
+            background: linear-gradient(135deg, #2196f3 0%, #03a9f4 100%);
+            color: #ffffff;
+            padding: 15px 35px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            display: inline-block;
+            transition: background 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .visit-button:hover {
+            background: linear-gradient(135deg, #1976d2 0%, #0288d1 100%);
+        }
+
+        .footer {
+            background-color: #f7f7f7;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #888888;
+            border-top: 1px solid #dddddd;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        .footer p.strong {
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://i.ibb.co/Ytcvw79/95b49c55bb49754e327945b9699a0033-1.jpg" alt="Chat App Logo">
+            <h1>Welcome to the Chat App!</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{name}},</p>
+            <p>Thank you for signing up! We're thrilled to have you on board. Your account has been successfully created, and you're now part of a vibrant community where seamless communication meets innovation.</p>
+            <p>Before you dive in, feel free to explore my portfolio to see more of my work and get a better idea of what drives me.</p>
+        </div>
+        <div class="button-container">
+            <a href="https://pk-github985.github.io/Parbhansh-portfilo/" class="visit-button">Visit My Portfolio</a>
+        </div>
+        <div class="footer">
+            <p class="strong">Best regards,</p>
+            <p>Parbhansh Sharma</p>
+        </div>
+    </div>
+</body>
+
+</html>

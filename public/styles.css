@@ -1,0 +1,193 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: radial-gradient(circle at top left, #2b2b2b, #4e4e4e); /* Darker, more neutral background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff;
+    overflow: hidden;
+}
+
+/* Container Styling */
+.container {
+    background: rgba(255, 255, 255, 0.95); /* Slightly less transparent for better contrast */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Slightly more pronounced shadow */
+    width: 350px;
+    max-width: 100%;
+    transition: all 0.5s ease;
+}
+
+/* Hidden Class */
+.hidden {
+    display: none;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    position: relative; /* Required for absolute positioning of the error line */
+}
+
+input {
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #4a54f1;
+    box-shadow: 0 0 8px rgba(74, 84, 241, 0.5);
+}
+
+/* Button Styling */
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff); /* Neon light gradient */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 0 10px rgba(0, 198, 255, 0.7); /* Neon light effect */
+}
+
+/* Button Hover Effect */
+button:hover {
+    background: linear-gradient(135deg, #0072ff, #00c6ff); /* Reverse gradient on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(0, 198, 255, 1); /* Intense neon light effect */
+}
+
+/* Header Styling */
+h1 {
+    margin-bottom: 25px;
+    font-size: 26px;
+    text-align: center;
+    color: #333;
+}
+
+/* Toggle Text Styling */
+.toggle-text {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.toggle-text a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.toggle-text a:hover {
+    color: #0056b3;
+}
+
+/* Pop-up Animation */
+.form-container {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.5s ease;
+}
+
+.hidden.form-container {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+/* Notification Popup Styling for Login */
+.notification-popup {
+    position: fixed;
+    bottom: 495px; /* Keeps the popup at the bottom */
+    left: 39.6%; /* Horizontally centers the popup */
+    transform: translate(-50%, 0); /* Adjust the popup to be perfectly centered */
+    background: linear-gradient(135deg, #ff6f61, #d85a9b); /* Gradient background */
+    color: #fff; /* White text color */
+    padding: 20px; /* Padding inside the popup */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Shadow for depth */
+    max-width: 350px; /* Maximum width */
+    font-size: 16px; /* Font size */
+    display: none; /* Hidden by default */
+    opacity: 0; /* Invisible initially */
+    transform: translateY(20px); /* Start position for the popup animation */
+    transition: opacity 0.4s ease, transform 0.4s ease; /* Smooth fade-in and slide-up */
+}
+/* Notification Popup Styling for Signup (Positioned at the top) */
+.notification-popup.signup {
+    top: 40px; /* Position it near the top */
+    bottom: auto; /* Override the default bottom s*/
+    left: 37.8%; /* Horizontally centers the popup */
+}
+
+.notification-popup.show {
+    display: block; /* Display popup */
+    opacity: 1; /* Fully visible */
+    transform: translate(-50%, 0); /* Move up into view */
+}
+
+
+/* Show Notification Popup */
+.notification-popup.success {
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+}
+
+.notification-popup.error {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+}
+
+.notification-popup.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Close Button Styling */
+.notification-popup .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.notification-popup .close-btn:hover {
+    color: #ffeb3b;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+    }
+    
+    /* Notification Popup Position for Mobile */
+    .notification-popup {
+        bottom: 495px;
+        left: 12%; /* Horizontally centers the popup */
+    }
+}

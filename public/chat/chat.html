@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PK Chat</title>
+    <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Bro Sis Buzz </h1>
+            <img src="icons8-exit-100.png" id="exitButton" class="exit-icon" alt="Exit">
+        </div>
+        <div id="messages" class="chat-messages"></div>
+        <div class="chat-input-container">
+            <input id="messageInput" type="text" class="chat-input" placeholder="Type a message...">
+            <button id="sendButton" class="send-button">
+                <img src="send-solid-24.png" alt="Send">
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="background-footer">
+        Designed by Parbhansh
+    </div>
+
+    <audio id="notificationSound" src="pikachu-funny-22569.mp3" preload="auto"></audio>
+
+    <script>
+        // Retrieve the displayName from localStorage
+        const displayName = localStorage.getItem('displayName');
+
+        if (!displayName) {
+            window.location.href = '/'; // Redirect to the login page if displayName is not found
+        }
+
+        // Attach displayName to the page or pass it to your chat JavaScript
+        document.body.dataset.displayName = displayName; // For example, storing it in data attribute
+    </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>
