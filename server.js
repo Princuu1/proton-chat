@@ -2,7 +2,6 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
-const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
@@ -10,34 +9,44 @@ const session = require('express-session');
 const fs = require('fs');
 require('dotenv').config();
 
+const { Pool } = require('pg');
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Setup database
-const dbPath = path.resolve(__dirname, 'users.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error("Error opening database: ", err.message);
-    } else {
-        console.log("Connected to the SQLite database.");
-        db.run(`
+// Setup PostgreSQL connection
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL environment variable
+    ssl: {
+        rejectUnauthorized: false // Required for connecting securely to Supabase
+    }
+});
+
+// Create table if it does not exist
+async function setupDatabase() {
+    try {
+        const client = await pool.connect();
+        console.log("Connected to the PostgreSQL database.");
+
+        await client.query(`
             CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 username TEXT NOT NULL UNIQUE,
                 email TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL
             )
-        `, (err) => {
-            if (err) {
-                console.error("Error creating table: ", err.message);
-            } else {
-                console.log("Table 'users' created or already exists.");
-            }
-        });
+        `);
+
+        console.log("Table 'users' created or already exists.");
+        client.release(); // Release the client back to the pool
+    } catch (err) {
+        console.error("Error setting up the database: ", err.message);
     }
-});
+}
+
+setupDatabase();
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
@@ -72,54 +81,57 @@ app.get('/chat', (req, res) => {
     }
     res.sendFile(path.join(__dirname, 'public/chat/chat.html'));
 });
+
 // Read the HTML file
 function getEmailTemplate(name) {
-let template = fs.readFileSync(path.join(__dirname, 'public/emailTemplate.html'), 'utf8'); // Corrected file path
-return template.replace('{{name}}',name);  // Replace placeholder with user's name
+    let template = fs.readFileSync(path.join(__dirname, 'public/emailTemplate.html'), 'utf8');
+    return template.replace('{{name}}', name); // Replace placeholder with user's name
 }
+
 // Handle signup
 app.post('/signup', async (req, res) => {
     const { name, username, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    db.run(
-        'INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)',
-        [name, username, email, hashedPassword],
-        function (err) {
-            if (err) {
-                return res.status(500).json({ message: 'username or email has already registerd' });
+    try {
+        const client = await pool.connect();
+        await client.query(
+            'INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4)',
+            [name, username, email, hashedPassword]
+        );
+
+        // Send confirmation email
+        const htmlContent = getEmailTemplate(name);
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Welcome to our Chat',
+            html: htmlContent
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log('Error sending email: ', error);
+            } else {
+                console.log('Email sent: ' + info.response);
             }
+        });
 
-            // Send confirmation email
-            const htmlContent = getEmailTemplate(name);  // Use the email template
-            const mailOptions = {
-                from: process.env.EMAIL_USER,
-                to: email,
-                subject: 'Welcome to our Chat',
-                html: htmlContent // Use the HTML template
-            };
-
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.log('Error sending email: ', error);
-                } else {
-                    console.log('Email sent: ' + info.response);
-                }
-            });
-
-            res.status(200).json({ message: 'User created successfully' });
-        }
-    );
+        res.status(200).json({ message: 'User created successfully' });
+        client.release(); // Release the client back to the pool
+    } catch (err) {
+        res.status(500).json({ message: 'Username or email has already been registered' });
+    }
 });
 
 // Handle login
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, row) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: 'Error logging in' });
-        }
+    try {
+        const client = await pool.connect();
+        const result = await client.query('SELECT * FROM users WHERE username = $1', [username]);
+        const row = result.rows[0];
 
         if (row && await bcrypt.compare(password, row.password)) {
             // Store user information in session
@@ -131,7 +143,11 @@ app.post('/login', (req, res) => {
         } else {
             res.status(401).json({ success: false, message: 'Username or password is incorrect' });
         }
-    });
+
+        client.release(); // Release the client back to the pool
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Error logging in' });
+    }
 });
 
 // Handle socket.io events
@@ -153,7 +169,6 @@ io.on('connection', (socket) => {
         console.log('User disconnected');
     });
 });
-
 
 server.listen(process.env.PORT || 3000, () => {
     console.log(`Server is running on port ${process.env.PORT || 3000}`);
